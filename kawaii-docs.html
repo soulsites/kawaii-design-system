@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kawaii Design System · Dokumentation</title>
+  <link rel="stylesheet" href="kawaii.css" />
+  <style>
+    /* Docs-specific layout */
+    html { scroll-behavior: smooth; }
+    .docs-layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .docs-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--k-surface-low);
+      border-right: 1.5px solid var(--k-outline-variant);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .docs-sidebar-header {
+      padding: 20px 16px 16px;
+      border-bottom: 1.5px solid var(--k-outline-variant);
+    }
+    .docs-sidebar-title { font-size: 16px; font-weight: 900; color: var(--k-on-surface); }
+    .docs-sidebar-sub   { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--k-outline); margin-top: 2px; }
+    .docs-nav { padding: 8px 0; }
+    .docs-nav-group { padding: 12px 16px 4px; font-size: 10px; font-weight: 800; letter-spacing: .1em; color: var(--k-outline); text-transform: uppercase; }
+    .docs-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--k-on-surface-variant);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 150ms;
+    }
+    .docs-nav-link:hover { color: var(--k-on-surface); background: var(--k-surface-container); }
+    .docs-nav-link.is-active { color: var(--k-primary); font-weight: 800; background: var(--k-primary-container); border-left-color: var(--k-primary); }
+
+    /* Main */
+    .docs-main { flex: 1; padding: 40px 48px; max-width: 900px; }
+
+    /* Section */
+    .docs-section { margin-bottom: 64px; scroll-margin-top: 24px; }
+    .docs-section-label { font-size: 10px; font-weight: 800; letter-spacing: .12em; color: var(--k-primary); text-transform: uppercase; margin-bottom: 4px; }
+    .docs-section-title { font-size: 28px; font-weight: 900; color: var(--k-on-surface); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .docs-section-desc  { font-size: 13px; color: var(--k-on-surface-variant); line-height: 1.75; max-width: 640px; margin-bottom: 28px; }
+    .docs-divider       { border: none; border-top: 1.5px solid var(--k-outline-variant); margin: 56px 0; }
+
+    /* Demo boxes */
+    .docs-demo {
+      margin-bottom: 20px;
+    }
+    .docs-demo-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--k-outline);
+      margin-bottom: 10px;
+    }
+    .docs-demo-box {
+      background: var(--k-surface-lowest);
+      border-radius: var(--k-shape-lg);
+      padding: 20px 24px;
+      border: 1.5px solid var(--k-outline-variant);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .docs-demo-box--col { flex-direction: column; align-items: flex-start; }
+    .docs-demo-box--dark { background: var(--k-inverse-surface); border-color: transparent; }
+
+    /* Code block */
+    .docs-code {
+      background: var(--k-surface-low);
+      border: 1.5px solid var(--k-outline-variant);
+      border-radius: var(--k-shape-sm);
+      padding: 12px 16px;
+      font-family: var(--k-font-mono);
+      font-size: 12px;
+      color: var(--k-on-surface);
+      line-height: 1.7;
+      overflow-x: auto;
+      margin-top: 10px;
+      white-space: pre;
+    }
+    .docs-code .c-tag  { color: var(--k-primary); }
+    .docs-code .c-attr { color: var(--k-tertiary); }
+    .docs-code .c-val  { color: var(--k-secondary); }
+    .docs-code .c-cmt  { color: var(--k-outline); }
+
+    /* Token table */
+    .docs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .docs-table th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--k-outline); border-bottom: 1.5px solid var(--k-outline-variant); }
+    .docs-table td { padding: 10px 12px; border-bottom: 1px solid var(--k-outline-variant); color: var(--k-on-surface); vertical-align: top; }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table .tag { display: inline-block; background: var(--k-primary-container); color: var(--k-on-primary-container); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--k-shape-full); font-family: var(--k-font-mono); }
+
+    /* Color swatch */
+    .docs-swatch {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .docs-swatch-box {
+      width: 48px;
+      height: 32px;
+      border-radius: var(--k-shape-sm);
+      border: 1px solid rgba(0,0,0,.08);
+      flex-shrink: 0;
+    }
+    .docs-swatch-info { font-size: 12px; }
+    .docs-swatch-name { font-weight: 700; color: var(--k-on-surface); }
+    .docs-swatch-var  { font-family: var(--k-font-mono); font-size: 11px; color: var(--k-on-surface-variant); }
+
+    /* Color role grid */
+    .docs-color-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .docs-color-card {
+      width: 88px;
+      text-align: center;
+    }
+    .docs-color-block {
+      width: 100%;
+      height: 48px;
+      border-radius: var(--k-shape-md);
+      border: 1px solid rgba(0,0,0,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .docs-color-name { font-size: 9px; font-weight: 700; color: var(--k-on-surface); line-height: 1.3; }
+    .docs-color-hex  { font-size: 9px; font-family: var(--k-font-mono); color: var(--k-on-surface-variant); }
+  </style>
+</head>
+<body>
+
+<div class="docs-layout">
+
+  <!-- ── Sidebar ───────────────────────────── -->
+  <aside class="docs-sidebar">
+    <div class="docs-sidebar-header">
+      <div style="font-size:22px;margin-bottom:4px">🌸</div>
+      <div class="docs-sidebar-title">Kawaii DS</div>
+      <div class="docs-sidebar-sub">CSS + JS · No Dependencies</div>
+    </div>
+    <nav class="docs-nav">
+      <div class="docs-nav-group">Grundlagen</div>
+      <a href="#setup"      class="docs-nav-link">⚡ Setup</a>
+      <a href="#tokens"     class="docs-nav-link">🎨 Design Tokens</a>
+      <a href="#typography" class="docs-nav-link">✍️ Typography</a>
+      <a href="#colors"     class="docs-nav-link">🌈 Color Roles</a>
+      <a href="#elevation"  class="docs-nav-link">🏔 Elevation</a>
+      <a href="#shape"      class="docs-nav-link">🫧 Shape</a>
+
+      <div class="docs-nav-group">Komponenten</div>
+      <a href="#buttons"    class="docs-nav-link">🌸 Buttons</a>
+      <a href="#fab"        class="docs-nav-link">➕ FAB</a>
+      <a href="#iconbtns"   class="docs-nav-link">💜 Icon Buttons</a>
+      <a href="#chips"      class="docs-nav-link">🎀 Chips</a>
+      <a href="#cards"      class="docs-nav-link">🃏 Cards</a>
+      <a href="#lists"      class="docs-nav-link">📋 Lists</a>
+      <a href="#textfields" class="docs-nav-link">📝 Text Fields</a>
+      <a href="#selection"  class="docs-nav-link">☑️ Selection Controls</a>
+      <a href="#sliders"    class="docs-nav-link">🎚 Sliders</a>
+      <a href="#tabs"       class="docs-nav-link">📑 Tabs</a>
+      <a href="#navigation" class="docs-nav-link">🧭 Navigation</a>
+      <a href="#appbar"     class="docs-nav-link">📱 App Bar</a>
+      <a href="#dialogs"    class="docs-nav-link">💬 Dialogs</a>
+      <a href="#menus"      class="docs-nav-link">📂 Menus</a>
+      <a href="#progress"   class="docs-nav-link">⏳ Progress</a>
+      <a href="#snackbar"   class="docs-nav-link">🔔 Snackbar</a>
+      <a href="#badge"      class="docs-nav-link">🏷 Badge</a>
+      <a href="#divider"    class="docs-nav-link">✦ Divider</a>
+      <a href="#tooltip"    class="docs-nav-link">💭 Tooltip</a>
+      <a href="#search"     class="docs-nav-link">🔍 Search</a>
+      <div class="docs-nav-group">JavaScript</div>
+      <a href="#js-api"     class="docs-nav-link">🧩 JS API</a>
+      <a href="#shuffle"    class="docs-nav-link">🔀 Shuffle</a>
+    </nav>
+  </aside>
+
+  <!-- ── Main Content ──────────────────────── -->
+  <main class="docs-main">
+
+    <!-- ══ SETUP ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="setup">
+      <div class="docs-section-label">Kawaii Design System</div>
+      <h1 class="docs-section-title">⚡ Setup</h1>
+      <p class="docs-section-desc">Nur zwei Dateien – kein Build-Tool, kein Framework. Einfach im <code>&lt;head&gt;</code> einbinden.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">HTML Einbindung</div>
+        <div class="docs-code"><span class="c-cmt">&lt;!-- Im &lt;head&gt; --&gt;</span>
+<span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-val">"stylesheet"</span> <span class="c-attr">href</span>=<span class="c-val">"kawaii.css"</span><span class="c-tag">&gt;</span>
+
+<span class="c-cmt">&lt;!-- Vor &lt;/body&gt; --&gt;</span>
+<span class="c-tag">&lt;script</span> <span class="c-attr">src</span>=<span class="c-val">"kawaii.js"</span><span class="c-tag">&gt;&lt;/script&gt;</span></div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Was du bekommst</div>
+        <div class="docs-demo-box docs-demo-box--col" style="gap:8px">
+          <div class="k-flex k-gap-sm k-items-center"><span style="color:var(--k-primary)">✓</span> <span>CSS Custom Properties für alle 30+ Design Tokens</span></div>
+          <div class="k-flex k-gap-sm k-items-center"><span style="color:var(--k-primary)">✓</span> <span>Alle Komponenten-Klassen (Buttons, Cards, Dialogs, …)</span></div>
+          <div class="k-flex k-gap-sm k-items-center"><span style="color:var(--k-primary)">✓</span> <span>Ripple-Effekte, Menus, Dialogs, Tabs — auto-initialisiert</span></div>
+          <div class="k-flex k-gap-sm k-items-center"><span style="color:var(--k-primary)">✓</span> <span>40 kuratierte Farbpaletten — live shuffelbar via <code>Kawaii.shuffle()</code></span></div>
+          <div class="k-flex k-gap-sm k-items-center"><span style="color:var(--k-primary)">✓</span> <span>Shuffle-FAB rechts unten (automatisch injiziert)</span></div>
+        </div>
+      </div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ DESIGN TOKENS ══════════════════════════════════════ -->
+    <section class="docs-section" id="tokens">
+      <div class="docs-section-label">Grundlagen</div>
+      <h2 class="docs-section-title">🎨 Design Tokens</h2>
+      <p class="docs-section-desc">Alle Tokens sind CSS Custom Properties auf <code>:root</code>. Der JS-Shuffle überschreibt sie live — kein Reload nötig.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">CSS Variablen Übersicht</div>
+        <table class="docs-table" style="margin-top:0">
+          <tr><th>Variable</th><th>Kategorie</th><th>Beispiel</th></tr>
+          <tr><td><span class="tag">--k-primary</span></td><td>Farbe</td><td>Primäre Aktionsfarbe</td></tr>
+          <tr><td><span class="tag">--k-surface</span></td><td>Farbe</td><td>Hintergrund für Cards, Seiten</td></tr>
+          <tr><td><span class="tag">--k-elev-1 … --k-elev-5</span></td><td>Elevation</td><td>Box-Shadow Stufen</td></tr>
+          <tr><td><span class="tag">--k-shape-xs … --k-shape-full</span></td><td>Form</td><td>Border-Radius Stufen</td></tr>
+          <tr><td><span class="tag">--k-font-body</span></td><td>Typography</td><td>Basis-Schriftart</td></tr>
+          <tr><td><span class="tag">--k-ease-bounce</span></td><td>Animation</td><td>Bounce-Easing Kurve</td></tr>
+        </table>
+      </div>
+      <div class="docs-code"><span class="c-cmt">/* Token direkt verwenden */</span>
+<span class="c-attr">.mein-element</span> {
+  background: <span class="c-val">var(--k-primary-container)</span>;
+  color:      <span class="c-val">var(--k-on-primary-container)</span>;
+  border-radius: <span class="c-val">var(--k-shape-md)</span>;
+  box-shadow: <span class="c-val">var(--k-elev-2)</span>;
+  transition: all 200ms <span class="c-val">var(--k-ease-bounce)</span>;
+}</div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ TYPOGRAPHY ══════════════════════════════════════════ -->
+    <section class="docs-section" id="typography">
+      <div class="docs-section-label">Grundlagen</div>
+      <h2 class="docs-section-title">✍️ Typography</h2>
+      <p class="docs-section-desc">15 Typo-Rollen nach Material Design 3. Klasse an jedes HTML-Element anhängen.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Type Scale</div>
+        <div class="docs-demo-box docs-demo-box--col" style="gap:16px;align-items:flex-start">
+          <div><div class="k-display-sm" style="line-height:1.2">Display Small</div><code style="font-size:10px;color:var(--k-outline)">.k-display-sm · .k-display-md · .k-display-lg</code></div>
+          <div><div class="k-headline-md">Headline Medium</div><code style="font-size:10px;color:var(--k-outline)">.k-headline-sm · .k-headline-md · .k-headline-lg</code></div>
+          <div><div class="k-title-lg">Title Large</div><code style="font-size:10px;color:var(--k-outline)">.k-title-sm · .k-title-md · .k-title-lg</code></div>
+          <div><div class="k-label-lg">Label Large · <span class="k-label-md">Label Medium · </span><span class="k-label-sm">Label Small</span></div><code style="font-size:10px;color:var(--k-outline)">.k-label-sm · .k-label-md · .k-label-lg</code></div>
+          <div><div class="k-body-lg">Body Large — Fließtext, Artikel</div><code style="font-size:10px;color:var(--k-outline)">.k-body-sm · .k-body-md · .k-body-lg</code></div>
+          <div><code class="k-mono">Monospace Text</code><code style="font-size:10px;color:var(--k-outline);display:block">.k-mono</code></div>
+        </div>
+      </div>
+      <div class="docs-code"><span class="c-tag">&lt;h1</span> <span class="c-attr">class</span>=<span class="c-val">"k-display-sm"</span><span class="c-tag">&gt;</span>Hero Headline<span class="c-tag">&lt;/h1&gt;</span>
+<span class="c-tag">&lt;h2</span> <span class="c-attr">class</span>=<span class="c-val">"k-headline-md"</span><span class="c-tag">&gt;</span>Section Title<span class="c-tag">&lt;/h2&gt;</span>
+<span class="c-tag">&lt;p</span>  <span class="c-attr">class</span>=<span class="c-val">"k-body-md"</span><span class="c-tag">&gt;</span>Fließtext-Paragraph<span class="c-tag">&lt;/p&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-label-sm"</span><span class="c-tag">&gt;</span>Timestamp · Caption<span class="c-tag">&lt;/span&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ COLOR ROLES ══════════════════════════════════════════ -->
+    <section class="docs-section" id="colors">
+      <div class="docs-section-label">Grundlagen</div>
+      <h2 class="docs-section-title">🌈 Color Roles</h2>
+      <p class="docs-section-desc">Utility-Klassen für Hintergrund und Textfarbe. Alle passen sich beim Shuffle automatisch an.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Hintergrund-Klassen</div>
+        <div class="docs-demo-box" style="gap:8px;flex-wrap:wrap">
+          <div class="k-p-sm k-shape-md k-bg-primary"        style="font-size:11px;font-weight:700">.k-bg-primary</div>
+          <div class="k-p-sm k-shape-md k-bg-secondary"      style="font-size:11px;font-weight:700">.k-bg-secondary</div>
+          <div class="k-p-sm k-shape-md k-bg-tertiary"       style="font-size:11px;font-weight:700">.k-bg-tertiary</div>
+          <div class="k-p-sm k-shape-md k-bg-error"          style="font-size:11px;font-weight:700">.k-bg-error</div>
+          <div class="k-p-sm k-shape-md k-bg-primary-container"   style="font-size:11px;font-weight:700">.k-bg-primary-container</div>
+          <div class="k-p-sm k-shape-md k-bg-secondary-container" style="font-size:11px;font-weight:700">.k-bg-secondary-container</div>
+          <div class="k-p-sm k-shape-md k-bg-tertiary-container"  style="font-size:11px;font-weight:700">.k-bg-tertiary-container</div>
+          <div class="k-p-sm k-shape-md k-bg-error-container"     style="font-size:11px;font-weight:700">.k-bg-error-container</div>
+          <div class="k-p-sm k-shape-md k-inverse-surface"   style="font-size:11px;font-weight:700">.k-inverse-surface</div>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Text-Klassen</div>
+        <div class="docs-demo-box docs-demo-box--col" style="gap:6px">
+          <span class="k-text-primary k-title-sm">.k-text-primary</span>
+          <span class="k-text-secondary k-title-sm">.k-text-secondary</span>
+          <span class="k-text-tertiary k-title-sm">.k-text-tertiary</span>
+          <span class="k-text-error k-title-sm">.k-text-error</span>
+          <span class="k-text-muted k-title-sm">.k-text-muted</span>
+          <span class="k-text-outline k-title-sm">.k-text-outline</span>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Surface-Skala</div>
+        <div class="docs-demo-box" style="gap:8px;padding:16px">
+          <div class="k-p-sm k-shape-md k-surface-lowest" style="font-size:11px;font-weight:700;border:1px solid var(--k-outline-variant)">.k-surface-lowest</div>
+          <div class="k-p-sm k-shape-md k-surface-low"    style="font-size:11px;font-weight:700">.k-surface-low</div>
+          <div class="k-p-sm k-shape-md k-surface"        style="font-size:11px;font-weight:700">.k-surface</div>
+          <div class="k-p-sm k-shape-md k-surface-high"   style="font-size:11px;font-weight:700">.k-surface-high</div>
+          <div class="k-p-sm k-shape-md k-surface-highest" style="font-size:11px;font-weight:700">.k-surface-highest</div>
+        </div>
+      </div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ ELEVATION ══════════════════════════════════════════ -->
+    <section class="docs-section" id="elevation">
+      <div class="docs-section-label">Grundlagen</div>
+      <h2 class="docs-section-title">🏔 Elevation</h2>
+      <p class="docs-section-desc">6 Schatten-Stufen. Tinted mit der aktuellen Primärfarbe.</p>
+      <div class="docs-demo">
+        <div class="docs-demo-label">Elev 0–5</div>
+        <div class="docs-demo-box" style="gap:20px;padding:24px">
+          <div class="k-p-md k-shape-lg k-surface" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">0<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-0</span></div>
+          <div class="k-p-md k-shape-lg k-surface k-elev-1" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">1<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-1</span></div>
+          <div class="k-p-md k-shape-lg k-surface k-elev-2" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">2<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-2</span></div>
+          <div class="k-p-md k-shape-lg k-surface k-elev-3" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">3<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-3</span></div>
+          <div class="k-p-md k-shape-lg k-surface k-elev-4" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">4<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-4</span></div>
+          <div class="k-p-md k-shape-lg k-surface k-elev-5" style="font-size:11px;font-weight:700;text-align:center;min-width:64px">5<br><span style="font-size:9px;color:var(--k-outline)">.k-elev-5</span></div>
+        </div>
+      </div>
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card k-elev-3"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SHAPE ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="shape">
+      <div class="docs-section-label">Grundlagen</div>
+      <h2 class="docs-section-title">🫧 Shape</h2>
+      <p class="docs-section-desc">8 Border-Radius Stufen als Utility-Klassen oder Token-Variablen.</p>
+      <div class="docs-demo">
+        <div class="docs-demo-label">Shape Scale</div>
+        <div class="docs-demo-box" style="gap:12px">
+          <div class="k-bg-primary-container k-p-md k-shape-none"   style="font-size:10px;font-weight:700;min-width:56px;text-align:center">none<br>0</div>
+          <div class="k-bg-primary-container k-p-md k-shape-xs"     style="font-size:10px;font-weight:700;min-width:56px;text-align:center">xs<br>4px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-sm"     style="font-size:10px;font-weight:700;min-width:56px;text-align:center">sm<br>8px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-md"     style="font-size:10px;font-weight:700;min-width:56px;text-align:center">md<br>12px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-lg"     style="font-size:10px;font-weight:700;min-width:56px;text-align:center">lg<br>16px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-xl"     style="font-size:10px;font-weight:700;min-width:56px;text-align:center">xl<br>28px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-xxl"    style="font-size:10px;font-weight:700;min-width:56px;text-align:center">xxl<br>32px</div>
+          <div class="k-bg-primary-container k-p-md k-shape-full"   style="font-size:10px;font-weight:700;min-width:56px;text-align:center">full<br>999px</div>
+        </div>
+      </div>
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-shape-xl"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-shape-md"</span><span class="c-tag">&gt;</span>Eckiger Button<span class="c-tag">&lt;/button&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ BUTTONS ════════════════════════════════════════════ -->
+    <section class="docs-section" id="buttons">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🌸 Buttons</h2>
+      <p class="docs-section-desc">5 Varianten + 3 Größen. Ripple-Effekt automatisch. Funktioniert mit <code>&lt;button&gt;</code> und <code>&lt;a&gt;</code>.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Varianten</div>
+        <div class="docs-demo-box">
+          <button class="k-btn">Filled</button>
+          <button class="k-btn k-btn--tonal">Tonal</button>
+          <button class="k-btn k-btn--outlined">Outlined</button>
+          <button class="k-btn k-btn--text">Text</button>
+          <button class="k-btn k-btn--elevated">Elevated</button>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Mit Icon</div>
+        <div class="docs-demo-box">
+          <button class="k-btn"><span class="k-icon">🌸</span> Mit Icon</button>
+          <button class="k-btn k-btn--tonal"><span class="k-icon">✨</span> Tonal + Icon</button>
+          <button class="k-btn k-btn--outlined"><span class="k-icon">💾</span> Speichern</button>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Größen</div>
+        <div class="docs-demo-box" style="align-items:center">
+          <button class="k-btn k-btn--sm">Small</button>
+          <button class="k-btn">Medium</button>
+          <button class="k-btn k-btn--lg">Large</button>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Farben &amp; Zustände</div>
+        <div class="docs-demo-box">
+          <button class="k-btn k-btn--secondary">Secondary</button>
+          <button class="k-btn k-btn--tertiary">Tertiary</button>
+          <button class="k-btn k-btn--error">Löschen</button>
+          <button class="k-btn" disabled>Disabled</button>
+          <button class="k-btn k-btn--outlined" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn"</span><span class="c-tag">&gt;</span>Filled (Standard)<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--tonal"</span><span class="c-tag">&gt;</span>Tonal<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--outlined"</span><span class="c-tag">&gt;</span>Outlined<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--text"</span><span class="c-tag">&gt;</span>Text<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--elevated"</span><span class="c-tag">&gt;</span>Elevated<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--error"</span><span class="c-tag">&gt;</span>Destructive<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--sm"</span><span class="c-tag">&gt;</span>Small<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--lg"</span><span class="c-tag">&gt;</span>Large<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;a</span>      <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--tonal"</span> <span class="c-attr">href</span>=<span class="c-val">"#"</span><span class="c-tag">&gt;</span>Link als Button<span class="c-tag">&lt;/a&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ FAB ════════════════════════════════════════════════ -->
+    <section class="docs-section" id="fab">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">➕ FAB – Floating Action Button</h2>
+      <p class="docs-section-desc">Primäre Hauptaktion. Fixiert positionieren mit <code>position: fixed</code>.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Varianten &amp; Größen</div>
+        <div class="docs-demo-box" style="align-items:flex-end;gap:16px">
+          <button class="k-fab k-fab--sm" title="Small FAB">✦</button>
+          <button class="k-fab" title="Standard FAB">➕</button>
+          <button class="k-fab k-fab--lg" title="Large FAB">🌸</button>
+          <button class="k-fab k-fab--extended">➕ Erstellen</button>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Farb-Varianten</div>
+        <div class="docs-demo-box">
+          <button class="k-fab k-fab--primary">🌸</button>
+          <button class="k-fab k-fab--secondary">💜</button>
+          <button class="k-fab k-fab--tertiary">✦</button>
+          <button class="k-fab k-fab--surface">⬆</button>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab"</span><span class="c-tag">&gt;</span>➕<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab k-fab--sm"</span><span class="c-tag">&gt;</span>✦<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab k-fab--lg"</span><span class="c-tag">&gt;</span>🌸<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab k-fab--extended"</span><span class="c-tag">&gt;</span>➕ Erstellen<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab k-fab--secondary"</span><span class="c-tag">&gt;</span>💜<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-fab k-fab--tertiary"</span><span class="c-tag">&gt;</span>✦<span class="c-tag">&lt;/button&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ ICON BUTTONS ═══════════════════════════════════════ -->
+    <section class="docs-section" id="iconbtns">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">💜 Icon Buttons</h2>
+      <p class="docs-section-desc">Kompakte Buttons für Symbole. Toggle-State via <code>aria-pressed</code>.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Varianten</div>
+        <div class="docs-demo-box">
+          <button class="k-icon-btn">♡</button>
+          <button class="k-icon-btn k-icon-btn--filled">♡</button>
+          <button class="k-icon-btn k-icon-btn--tonal">🔖</button>
+          <button class="k-icon-btn k-icon-btn--outlined">✎</button>
+          <button class="k-icon-btn" aria-pressed="true">♥</button>
+          <button class="k-icon-btn" disabled>🔒</button>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn"</span><span class="c-tag">&gt;</span>♡<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn k-icon-btn--filled"</span><span class="c-tag">&gt;</span>♡<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn k-icon-btn--tonal"</span><span class="c-tag">&gt;</span>🔖<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn k-icon-btn--outlined"</span><span class="c-tag">&gt;</span>✎<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-cmt">&lt;!-- Toggle: aria-pressed="true/false" --&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn"</span> <span class="c-attr">aria-pressed</span>=<span class="c-val">"true"</span><span class="c-tag">&gt;</span>♥<span class="c-tag">&lt;/button&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ CHIPS ═══════════════════════════════════════════════ -->
+    <section class="docs-section" id="chips">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🎀 Chips</h2>
+      <p class="docs-section-desc">Kompakte Auswahlhilfen. Aktiver Zustand via <code>is-selected</code> oder <code>aria-selected="true"</code>.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Basis &amp; States</div>
+        <div class="docs-demo-box">
+          <button class="k-chip">Standard</button>
+          <button class="k-chip is-selected">Ausgewählt</button>
+          <button class="k-chip" aria-selected="true">aria-selected</button>
+          <button class="k-chip k-chip--leading-icon"><span class="k-chip-icon">🌸</span> Mit Icon</button>
+          <button class="k-chip k-chip--suggestion">Vorschlag</button>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Input Chip (entfernbar)</div>
+        <div class="docs-demo-box">
+          <span class="k-chip k-chip--input">Berlin <span class="k-chip-remove" role="button" onclick="this.parentElement.remove()">✕</span></span>
+          <span class="k-chip k-chip--input is-selected">Hamburg <span class="k-chip-remove" role="button" onclick="this.parentElement.remove()">✕</span></span>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip"</span><span class="c-tag">&gt;</span>Filter<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip is-selected"</span><span class="c-tag">&gt;</span>Aktiv<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip k-chip--leading-icon"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip-icon"</span><span class="c-tag">&gt;</span>🌸<span class="c-tag">&lt;/span&gt;</span> Mit Icon
+<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip k-chip--input"</span><span class="c-tag">&gt;</span>
+  Tag <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-chip-remove"</span><span class="c-tag">&gt;</span>✕<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/span&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ CARDS ═══════════════════════════════════════════════ -->
+    <section class="docs-section" id="cards">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🃏 Cards</h2>
+      <p class="docs-section-desc">3 Varianten. Hover-Elevation und Transform sind eingebaut.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Elevated · Filled · Outlined</div>
+        <div class="docs-demo-box" style="align-items:flex-start;gap:16px">
+          <div class="k-card k-card--elevated" style="width:200px">
+            <div class="k-card-body">
+              <div class="k-card-title">Elevated Card</div>
+              <div class="k-card-subtitle">Subtitle here</div>
+              <div class="k-card-text">Inhalt mit Schatten und Hover-Effekt.</div>
+            </div>
+            <div class="k-card-actions">
+              <button class="k-btn k-btn--text k-btn--sm">Action</button>
+            </div>
+          </div>
+          <div class="k-card k-card--filled" style="width:200px">
+            <div class="k-card-body">
+              <div class="k-card-badge">NEU</div>
+              <div class="k-card-title">Filled Card</div>
+              <div class="k-card-text">Mit Badge oben rechts.</div>
+            </div>
+          </div>
+          <div class="k-card k-card--outlined" style="width:200px">
+            <div class="k-card-body">
+              <div class="k-card-title">Outlined Card</div>
+              <div class="k-card-text">Nur Rand, kein Schatten.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card k-card--elevated"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card-body"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card-title"</span><span class="c-tag">&gt;</span>Titel<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card-subtitle"</span><span class="c-tag">&gt;</span>Subtitle<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card-text"</span><span class="c-tag">&gt;</span>Inhalt<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-card-actions"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--text k-btn--sm"</span><span class="c-tag">&gt;</span>Action<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Varianten: k-card--filled · k-card--outlined --&gt;</span>
+<span class="c-cmt">&lt;!-- Badge: &lt;div class="k-card-badge"&gt;NEU&lt;/div&gt; inside k-card-body --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ LISTS ═══════════════════════════════════════════════ -->
+    <section class="docs-section" id="lists">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">📋 Lists</h2>
+      <div class="docs-demo">
+        <div class="docs-demo-label">List Items</div>
+        <div class="docs-demo-box docs-demo-box--col" style="padding:0">
+          <ul class="k-list" style="width:100%;border-radius:var(--k-shape-lg)">
+            <li class="k-list-item">
+              <span class="k-list-item-leading">🌸</span>
+              <div class="k-list-item-content">
+                <div class="k-list-item-headline">Headline Text</div>
+                <div class="k-list-item-supporting">Supporting text hier</div>
+              </div>
+              <span class="k-list-item-trailing">→</span>
+            </li>
+            <li class="k-list-item is-active">
+              <span class="k-list-item-leading">✦</span>
+              <div class="k-list-item-content">
+                <div class="k-list-item-headline">Aktives Item</div>
+                <div class="k-list-item-supporting">is-active Klasse</div>
+              </div>
+            </li>
+            <li class="k-list-item">
+              <span class="k-list-item-leading">💜</span>
+              <div class="k-list-item-content">
+                <div class="k-list-item-headline">Drittes Item</div>
+              </div>
+              <span class="k-list-item-trailing">⋯</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="docs-code"><span class="c-tag">&lt;ul</span> <span class="c-attr">class</span>=<span class="c-val">"k-list"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;li</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item-leading"</span><span class="c-tag">&gt;</span>🌸<span class="c-tag">&lt;/span&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item-content"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item-headline"</span><span class="c-tag">&gt;</span>Titel<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item-supporting"</span><span class="c-tag">&gt;</span>Beschreibung<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-list-item-trailing"</span><span class="c-tag">&gt;</span>→<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;/li&gt;</span>
+<span class="c-tag">&lt;/ul&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ TEXT FIELDS ════════════════════════════════════════ -->
+    <section class="docs-section" id="textfields">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">📝 Text Fields</h2>
+      <p class="docs-section-desc">Floating Label läuft beim Focus automatisch hoch. Outlined &amp; Filled Variante.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Outlined Fields</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div class="k-field k-field--outlined" style="max-width:320px">
+            <div class="k-field-wrap">
+              <input type="text" id="f1" placeholder=" " />
+              <label for="f1">E-Mail Adresse</label>
+            </div>
+          </div>
+          <div class="k-field k-field--outlined k-field--with-leading" style="max-width:320px">
+            <div class="k-field-wrap">
+              <span class="k-field-leading-icon">🔍</span>
+              <input type="text" id="f2" placeholder=" " />
+              <label for="f2">Suche</label>
+            </div>
+          </div>
+          <div class="k-field k-field--outlined is-error" style="max-width:320px">
+            <div class="k-field-wrap">
+              <input type="text" id="f3" placeholder=" " value="falsch@" />
+              <label for="f3">E-Mail</label>
+            </div>
+            <div class="k-field-helper">Ungültige E-Mail-Adresse</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Filled Fields</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div class="k-field k-field--filled" style="max-width:320px">
+            <div class="k-field-wrap">
+              <input type="text" id="f4" placeholder=" " />
+              <label for="f4">Name</label>
+            </div>
+            <div class="k-field-helper">Vor- und Nachname</div>
+          </div>
+          <div class="k-field k-field--filled" style="max-width:320px">
+            <div class="k-field-wrap">
+              <textarea id="f5" rows="3" placeholder=" "></textarea>
+              <label for="f5">Nachricht</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">&lt;!-- Outlined --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-field k-field--outlined"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-field-wrap"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"text"</span> <span class="c-attr">id</span>=<span class="c-val">"feld"</span> <span class="c-attr">placeholder</span>=<span class="c-val">" "</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;label</span> <span class="c-attr">for</span>=<span class="c-val">"feld"</span><span class="c-tag">&gt;</span>Label<span class="c-tag">&lt;/label&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-field-helper"</span><span class="c-tag">&gt;</span>Hilfetext<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Modifier: k-field--filled · is-error · is-disabled --&gt;</span>
+<span class="c-cmt">&lt;!-- Mit Icon: k-field--with-leading + span.k-field-leading-icon --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SELECTION CONTROLS ════════════════════════════════ -->
+    <section class="docs-section" id="selection">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">☑️ Selection Controls</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Checkbox · Radio · Switch</div>
+        <div class="docs-demo-box" style="gap:24px;flex-wrap:wrap">
+          <label class="k-checkbox-wrap">
+            <input type="checkbox">
+            <span class="k-checkbox"></span>
+            <span class="k-checkbox-label">Unchecked</span>
+          </label>
+          <label class="k-checkbox-wrap">
+            <input type="checkbox" checked>
+            <span class="k-checkbox"></span>
+            <span class="k-checkbox-label">Checked</span>
+          </label>
+          <label class="k-radio-wrap">
+            <input type="radio" name="demo" value="a">
+            <span class="k-radio"></span>
+            <span class="k-radio-label">Option A</span>
+          </label>
+          <label class="k-radio-wrap">
+            <input type="radio" name="demo" value="b" checked>
+            <span class="k-radio"></span>
+            <span class="k-radio-label">Option B</span>
+          </label>
+          <label class="k-switch-wrap">
+            <input type="checkbox">
+            <span class="k-switch"></span>
+            <span class="k-switch-label">Off</span>
+          </label>
+          <label class="k-switch-wrap">
+            <input type="checkbox" checked>
+            <span class="k-switch"></span>
+            <span class="k-switch-label">On</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">&lt;!-- Checkbox --&gt;</span>
+<span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"k-checkbox-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"checkbox"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-checkbox"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-checkbox-label"</span><span class="c-tag">&gt;</span>Ich stimme zu<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/label&gt;</span>
+<span class="c-cmt">&lt;!-- Radio --&gt;</span>
+<span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"k-radio-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"radio"</span> <span class="c-attr">name</span>=<span class="c-val">"gruppe"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-radio"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-radio-label"</span><span class="c-tag">&gt;</span>Option<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/label&gt;</span>
+<span class="c-cmt">&lt;!-- Switch --&gt;</span>
+<span class="c-tag">&lt;label</span> <span class="c-attr">class</span>=<span class="c-val">"k-switch-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"checkbox"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-switch"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-switch-label"</span><span class="c-tag">&gt;</span>Dark Mode<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/label&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SLIDERS ════════════════════════════════════════════ -->
+    <section class="docs-section" id="sliders">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🎚 Sliders</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Slider mit Wertanzeige</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div class="k-slider-wrap" style="width:100%;max-width:400px">
+            <div class="k-slider-label"><span>Lautstärke</span><span class="k-slider-value">60</span></div>
+            <input class="k-slider" type="range" min="0" max="100" value="60">
+          </div>
+          <div class="k-slider-wrap" style="width:100%;max-width:400px">
+            <div class="k-slider-label"><span>Helligkeit</span><span class="k-slider-value">30</span></div>
+            <input class="k-slider" type="range" min="0" max="100" value="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-slider-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-slider-label"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span&gt;</span>Volume<span class="c-tag">&lt;/span&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-slider-value"</span><span class="c-tag">&gt;</span>60<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">class</span>=<span class="c-val">"k-slider"</span> <span class="c-attr">type</span>=<span class="c-val">"range"</span> <span class="c-attr">min</span>=<span class="c-val">"0"</span> <span class="c-attr">max</span>=<span class="c-val">"100"</span> <span class="c-attr">value</span>=<span class="c-val">"60"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ TABS ═══════════════════════════════════════════════ -->
+    <section class="docs-section" id="tabs">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">📑 Tabs</h2>
+      <p class="docs-section-desc">Primär-Tabs mit Unterstrich-Indikator. JS schaltet automatisch bei Klick.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Primary Tabs</div>
+        <div class="docs-demo-box docs-demo-box--col" style="padding:0;overflow:hidden">
+          <div class="k-tabs" id="tabs-demo" data-tabs-group="tabs-demo">
+            <button class="k-tab is-active" aria-selected="true" data-tab-target="tab-a">🌸 Überblick</button>
+            <button class="k-tab" data-tab-target="tab-b">✦ Features</button>
+            <button class="k-tab" data-tab-target="tab-c">💜 Settings</button>
+          </div>
+          <div style="padding:16px">
+            <div id="tab-a">Inhalt für Tab A</div>
+            <div id="tab-b" hidden>Inhalt für Tab B</div>
+            <div id="tab-c" hidden>Inhalt für Tab C</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Secondary Tabs (Pill-Style)</div>
+        <div class="docs-demo-box">
+          <div class="k-tabs k-tabs--secondary">
+            <button class="k-tab is-active">Täglich</button>
+            <button class="k-tab">Wöchentlich</button>
+            <button class="k-tab">Monatlich</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-tabs"</span> <span class="c-attr">data-tabs-group</span>=<span class="c-val">"mein-panel"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-tab is-active"</span> <span class="c-attr">data-tab-target</span>=<span class="c-val">"panel-1"</span><span class="c-tag">&gt;</span>Tab 1<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-tab"</span> <span class="c-attr">data-tab-target</span>=<span class="c-val">"panel-2"</span><span class="c-tag">&gt;</span>Tab 2<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">id</span>=<span class="c-val">"panel-1"</span> <span class="c-attr">data-tabs-group</span>=<span class="c-val">"mein-panel"</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">id</span>=<span class="c-val">"panel-2"</span> <span class="c-attr">data-tabs-group</span>=<span class="c-val">"mein-panel"</span> <span class="c-attr">hidden</span><span class="c-tag">&gt;</span>…<span class="c-tag">&lt;/div&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ NAVIGATION ══════════════════════════════════════════ -->
+    <section class="docs-section" id="navigation">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🧭 Navigation</h2>
+      <p class="docs-section-desc">Bottom Navigation Bar für Mobile, Navigation Rail für Desktop. JS verwaltet den aktiven Zustand.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Navigation Bar (Mobile)</div>
+        <div class="docs-demo-box" style="padding:0;display:block;border-radius:var(--k-shape-lg);overflow:hidden">
+          <nav class="k-nav-bar">
+            <button class="k-nav-item is-active" aria-selected="true">
+              <span class="k-nav-item-icon">🏠</span>Home
+            </button>
+            <button class="k-nav-item">
+              <span class="k-nav-item-icon">🔍</span>Suche
+            </button>
+            <button class="k-nav-item">
+              <span class="k-nav-item-icon">🔔</span>Benachrichtigungen
+            </button>
+            <button class="k-nav-item">
+              <span class="k-nav-item-icon">👤</span>Profil
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Navigation Rail (Desktop, Sidebar)</div>
+        <div class="docs-demo-box" style="padding:0;display:block;border-radius:var(--k-shape-lg);overflow:hidden;max-width:120px">
+          <nav class="k-nav-rail" style="border-radius:var(--k-shape-lg);border-right:none">
+            <button class="k-nav-item is-active">
+              <span class="k-nav-item-icon">🏠</span>Home
+            </button>
+            <button class="k-nav-item">
+              <span class="k-nav-item-icon">🔍</span>Suche
+            </button>
+            <button class="k-nav-item">
+              <span class="k-nav-item-icon">💜</span>Favoriten
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;nav</span> <span class="c-attr">class</span>=<span class="c-val">"k-nav-bar"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-nav-item is-active"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-nav-item-icon"</span><span class="c-tag">&gt;</span>🏠<span class="c-tag">&lt;/span&gt;</span>Home
+  <span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-nav-item"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-nav-item-icon"</span><span class="c-tag">&gt;</span>🔍<span class="c-tag">&lt;/span&gt;</span>Suche
+  <span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/nav&gt;</span>
+<span class="c-cmt">&lt;!-- Rail: class="k-nav-rail" statt k-nav-bar --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ APP BAR ════════════════════════════════════════════ -->
+    <section class="docs-section" id="appbar">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">📱 App Bar</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Small · Medium · Large</div>
+        <div class="docs-demo-box docs-demo-box--col" style="padding:0;gap:0;border-radius:var(--k-shape-lg);overflow:hidden">
+          <div class="k-app-bar">
+            <button class="k-icon-btn">←</button>
+            <span class="k-app-bar-title">Small App Bar</span>
+            <button class="k-icon-btn">⋮</button>
+          </div>
+          <div class="k-app-bar k-app-bar--medium" style="border-top:1px solid var(--k-outline-variant)">
+            <button class="k-icon-btn">←</button>
+            <span class="k-app-bar-title">Medium</span>
+            <button class="k-icon-btn">⋮</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;header</span> <span class="c-attr">class</span>=<span class="c-val">"k-app-bar"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn"</span><span class="c-tag">&gt;</span>←<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-app-bar-title"</span><span class="c-tag">&gt;</span>Seitenname<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn"</span><span class="c-tag">&gt;</span>⋮<span class="c-tag">&lt;/button&gt;</span>
+<span class="c-tag">&lt;/header&gt;</span>
+<span class="c-cmt">&lt;!-- Größen: k-app-bar--medium · k-app-bar--large --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ DIALOGS ════════════════════════════════════════════ -->
+    <section class="docs-section" id="dialogs">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">💬 Dialogs</h2>
+      <p class="docs-section-desc">Öffnen via <code>data-dialog-open="id"</code>, schließen via <code>data-dialog-close</code> oder Klick auf Backdrop. ESC-Taste funktioniert automatisch.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Live Demo</div>
+        <div class="docs-demo-box">
+          <button class="k-btn" data-dialog-open="dialog-demo">Dialog öffnen</button>
+          <button class="k-btn k-btn--outlined" data-dialog-open="dialog-confirm">Bestätigung</button>
+        </div>
+      </div>
+
+      <!-- Dialog: Standard -->
+      <div class="k-dialog-backdrop" id="dialog-demo">
+        <div class="k-dialog" style="max-width:400px">
+          <div class="k-dialog-icon">🌸</div>
+          <div class="k-dialog-title">Kawaii Dialog</div>
+          <div class="k-dialog-content">Das ist ein Modal-Dialog. Klicke auf Schließen oder drücke ESC um ihn zu schließen.</div>
+          <div class="k-dialog-actions">
+            <button class="k-btn k-btn--text" data-dialog-close>Abbrechen</button>
+            <button class="k-btn" data-dialog-close>Bestätigen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dialog: Confirm -->
+      <div class="k-dialog-backdrop" id="dialog-confirm">
+        <div class="k-dialog" style="max-width:360px">
+          <div class="k-dialog-icon">⚠️</div>
+          <div class="k-dialog-title">Wirklich löschen?</div>
+          <div class="k-dialog-content">Diese Aktion kann nicht rückgängig gemacht werden.</div>
+          <div class="k-dialog-actions">
+            <button class="k-btn k-btn--text" data-dialog-close>Abbrechen</button>
+            <button class="k-btn k-btn--error" data-dialog-close>Löschen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">&lt;!-- Trigger --&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn"</span> <span class="c-attr">data-dialog-open</span>=<span class="c-val">"mein-dialog"</span><span class="c-tag">&gt;</span>Öffnen<span class="c-tag">&lt;/button&gt;</span>
+
+<span class="c-cmt">&lt;!-- Dialog Markup --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog-backdrop"</span> <span class="c-attr">id</span>=<span class="c-val">"mein-dialog"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog-icon"</span><span class="c-tag">&gt;</span>🌸<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog-title"</span><span class="c-tag">&gt;</span>Titel<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog-content"</span><span class="c-tag">&gt;</span>Inhalt<span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-dialog-actions"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn k-btn--text"</span> <span class="c-attr">data-dialog-close</span><span class="c-tag">&gt;</span>Abbrechen<span class="c-tag">&lt;/button&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn"</span> <span class="c-attr">data-dialog-close</span><span class="c-tag">&gt;</span>OK<span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- JS API: Kawaii.openDialog("id") / Kawaii.closeDialog("id") --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ MENUS ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="menus">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">📂 Menus</h2>
+      <p class="docs-section-desc">Dropdown via <code>data-menu-toggle="id"</code>. Schließt automatisch bei Außen-Klick.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Dropdown Menu</div>
+        <div class="docs-demo-box" style="justify-content:center;min-height:200px;align-items:flex-start;padding-top:16px">
+          <div class="k-menu-host">
+            <button class="k-btn k-btn--tonal" data-menu-toggle="demo-menu">Menü ⌄</button>
+            <div class="k-menu" id="demo-menu">
+              <button class="k-menu-item">🌸 Bearbeiten</button>
+              <button class="k-menu-item">🔖 Speichern</button>
+              <button class="k-menu-item">📤 Exportieren</button>
+              <div class="k-menu-divider"></div>
+              <button class="k-menu-item is-destructive">🗑 Löschen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-menu-host"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn"</span> <span class="c-attr">data-menu-toggle</span>=<span class="c-val">"mein-menu"</span><span class="c-tag">&gt;</span>Öffnen ⌄<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-menu"</span> <span class="c-attr">id</span>=<span class="c-val">"mein-menu"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-menu-item"</span><span class="c-tag">&gt;</span>Bearbeiten<span class="c-tag">&lt;/button&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-menu-divider"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+    <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-menu-item is-destructive"</span><span class="c-tag">&gt;</span>Löschen<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ PROGRESS ═══════════════════════════════════════════ -->
+    <section class="docs-section" id="progress">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">⏳ Progress Indicators</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Linear Progress</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div style="width:100%">
+            <div class="k-label-sm k-text-muted" style="margin-bottom:8px">Determinate — 70%</div>
+            <div class="k-progress"><div class="k-progress-bar" style="width:70%"></div></div>
+          </div>
+          <div style="width:100%">
+            <div class="k-label-sm k-text-muted" style="margin-bottom:8px">Indeterminate</div>
+            <div class="k-progress k-progress--indeterminate"><div class="k-progress-bar"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Circular Spinner (via JS)</div>
+        <div class="docs-demo-box" id="spinner-demo"></div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">&lt;!-- Linear determinate --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-progress"</span> <span class="c-attr">id</span>=<span class="c-val">"bar"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-progress-bar"</span> <span class="c-attr">style</span>=<span class="c-val">"width:60%"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Indeterminate --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-progress k-progress--indeterminate"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-progress-bar"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Circular via JS --&gt;</span>
+<span class="c-tag">&lt;script&gt;</span>
+  document.getElementById('container').appendChild(Kawaii.makeSpinner(40, true));
+  <span class="c-cmt">// Kawaii.setProgress(barEl, 80)</span>
+<span class="c-tag">&lt;/script&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SNACKBAR ═══════════════════════════════════════════ -->
+    <section class="docs-section" id="snackbar">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🔔 Snackbar</h2>
+      <p class="docs-section-desc">Kurze Mitteilungen. Auto-dismiss nach 3s. Queue-basiert bei mehreren Aufrufen.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Live Demo</div>
+        <div class="docs-demo-box">
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.showSnack('Änderungen gespeichert ✓')">Einfach</button>
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.showSnack('Element gelöscht', { action: 'Rückgängig', onAction: function(){ Kawaii.showSnack('Wiederhergestellt!') } })">Mit Action</button>
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.showSnack('Snack 1');Kawaii.showSnack('Snack 2');Kawaii.showSnack('Snack 3')">Queue (3x)</button>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">// Einfach</span>
+Kawaii.showSnack(<span class="c-val">'Gespeichert!'</span>);
+
+<span class="c-cmt">// Mit Action-Button</span>
+Kawaii.showSnack(<span class="c-val">'Gelöscht'</span>, {
+  action:   <span class="c-val">'Rückgängig'</span>,
+  onAction: () => console.log(<span class="c-val">'Undo!'</span>),
+  duration: 5000, <span class="c-cmt">// optional, default 3000ms</span>
+});</div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ BADGE ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="badge">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🏷 Badge</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Badges auf Elementen</div>
+        <div class="docs-demo-box" style="gap:24px">
+          <div class="k-badge-host">
+            <button class="k-icon-btn">🔔</button>
+            <span class="k-badge">3</span>
+          </div>
+          <div class="k-badge-host">
+            <button class="k-icon-btn">💬</button>
+            <span class="k-badge">99+</span>
+          </div>
+          <div class="k-badge-host">
+            <button class="k-icon-btn k-icon-btn--tonal">✉</button>
+            <span class="k-badge k-badge--dot"></span>
+          </div>
+          <div class="k-badge-host">
+            <button class="k-btn k-btn--tonal">Nachrichten</button>
+            <span class="k-badge">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-badge-host"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-icon-btn"</span><span class="c-tag">&gt;</span>🔔<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-badge"</span><span class="c-tag">&gt;</span>3<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Dot-Badge (kein Text): --&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-badge k-badge--dot"</span><span class="c-tag">&gt;&lt;/span&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ DIVIDER ════════════════════════════════════════════ -->
+    <section class="docs-section" id="divider">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">✦ Divider</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Standard &amp; Thick</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div style="width:100%">Standard <code>.k-divider</code></div>
+          <hr class="k-divider" style="width:100%">
+          <div style="width:100%">Thick <code>.k-divider--thick</code></div>
+          <hr class="k-divider k-divider--thick" style="width:100%">
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;hr</span> <span class="c-attr">class</span>=<span class="c-val">"k-divider"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;hr</span> <span class="c-attr">class</span>=<span class="c-val">"k-divider k-divider--thick"</span><span class="c-tag">&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ TOOLTIP ════════════════════════════════════════════ -->
+    <section class="docs-section" id="tooltip">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">💭 Tooltip</h2>
+      <p class="docs-section-desc">Rein CSS-basiert. Hover über das Element aktiviert den Tooltip.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Positionen</div>
+        <div class="docs-demo-box" style="gap:24px;justify-content:center;padding:40px 24px">
+          <div class="k-tooltip-host">
+            <button class="k-btn k-btn--tonal">Oben</button>
+            <div class="k-tooltip">Tooltip oben ↑</div>
+          </div>
+          <div class="k-tooltip-host">
+            <button class="k-btn k-btn--tonal">Unten</button>
+            <div class="k-tooltip k-tooltip--bottom">Tooltip unten ↓</div>
+          </div>
+          <div class="k-tooltip-host">
+            <button class="k-btn k-btn--tonal">Links</button>
+            <div class="k-tooltip k-tooltip--left">← Links</div>
+          </div>
+          <div class="k-tooltip-host">
+            <button class="k-btn k-btn--tonal">Rechts</button>
+            <div class="k-tooltip k-tooltip--right">Rechts →</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-tooltip-host"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"k-btn"</span><span class="c-tag">&gt;</span>Hover mich<span class="c-tag">&lt;/button&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-tooltip"</span><span class="c-tag">&gt;</span>Tooltip Text<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-cmt">&lt;!-- Modifier: k-tooltip--bottom · k-tooltip--left · k-tooltip--right --&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SEARCH ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="search">
+      <div class="docs-section-label">Komponenten</div>
+      <h2 class="docs-section-title">🔍 Search</h2>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Search Bar</div>
+        <div class="docs-demo-box docs-demo-box--col">
+          <div class="k-search" style="max-width:400px;width:100%">
+            <span class="k-search-icon">🔍</span>
+            <input type="search" placeholder="Suche…">
+          </div>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-val">"k-search"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-val">"k-search-icon"</span><span class="c-tag">&gt;</span>🔍<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-attr">type</span>=<span class="c-val">"search"</span> <span class="c-attr">placeholder</span>=<span class="c-val">"Suche…"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ JS API ══════════════════════════════════════════════ -->
+    <section class="docs-section" id="js-api">
+      <div class="docs-section-label">JavaScript</div>
+      <h2 class="docs-section-title">🧩 JS API</h2>
+      <p class="docs-section-desc">Das globale <code>Kawaii</code>-Objekt bietet alle Steuerfunktionen. Alles auto-initialisiert sich beim Seitenload.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">API Referenz</div>
+        <table class="docs-table">
+          <tr><th>Methode</th><th>Beschreibung</th></tr>
+          <tr><td><span class="tag">Kawaii.shuffle()</span></td><td>Zufällige Palette aus 40 Kombinationen anwenden. Gibt die gewählten 3 Farben zurück.</td></tr>
+          <tr><td><span class="tag">Kawaii.setTheme(p, s, bg)</span></td><td>Manuelle Palette setzen. 3 Hex-Farben: primary, secondary, surface.</td></tr>
+          <tr><td><span class="tag">Kawaii.getPalette()</span></td><td>Array aller 40 PALETTE_COMBOS zurückgeben.</td></tr>
+          <tr><td><span class="tag">Kawaii.getActiveCombo()</span></td><td>Aktuell aktive 3-Farb-Kombination abfragen.</td></tr>
+          <tr><td><span class="tag">Kawaii.openDialog(id)</span></td><td>Dialog-Backdrop mit der gegebenen ID öffnen.</td></tr>
+          <tr><td><span class="tag">Kawaii.closeDialog(id)</span></td><td>Dialog schließen.</td></tr>
+          <tr><td><span class="tag">Kawaii.showSnack(msg, opts)</span></td><td>Snackbar anzeigen. Options: <code>action</code>, <code>onAction</code>, <code>duration</code>.</td></tr>
+          <tr><td><span class="tag">Kawaii.setProgress(el, val)</span></td><td>Linear Progress Bar auf Wert 0–100 setzen.</td></tr>
+          <tr><td><span class="tag">Kawaii.makeSpinner(size, ind)</span></td><td>Circular Spinner-Element erstellen und zurückgeben.</td></tr>
+          <tr><td><span class="tag">Kawaii.reinit()</span></td><td>Alle Komponenten re-initialisieren (nach dynamischem DOM-Einfügen).</td></tr>
+          <tr><td><span class="tag">Kawaii.color.lighten(hex, t)</span></td><td>Farbe aufhellen (t=0–1).</td></tr>
+          <tr><td><span class="tag">Kawaii.color.darken(hex, t)</span></td><td>Farbe abdunkeln (t=0–1).</td></tr>
+          <tr><td><span class="tag">Kawaii.color.blend(h1, h2, t)</span></td><td>Zwei Farben mischen (t=0→h1, t=1→h2).</td></tr>
+          <tr><td><span class="tag">Kawaii.color.contrastText(hex)</span></td><td>#1a1a1a oder #ffffff – je nach Luminanz.</td></tr>
+        </table>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Data-Attribute Hooks (kein JS nötig)</div>
+        <table class="docs-table">
+          <tr><th>Attribut</th><th>Element</th><th>Effekt</th></tr>
+          <tr><td><span class="tag">data-dialog-open="id"</span></td><td>Beliebiges Element</td><td>Öffnet Dialog mit der ID beim Klick</td></tr>
+          <tr><td><span class="tag">data-dialog-close</span></td><td>Button im Dialog</td><td>Schließt den übergeordneten Dialog</td></tr>
+          <tr><td><span class="tag">data-menu-toggle="id"</span></td><td>Trigger-Button</td><td>Öffnet/schließt Menu mit der ID</td></tr>
+          <tr><td><span class="tag">data-tabs-group="name"</span></td><td>.k-tabs und Panels</td><td>Verknüpft Tabs mit Panel-Elementen</td></tr>
+          <tr><td><span class="tag">data-tab-target="id"</span></td><td>.k-tab Button</td><td>Welches Panel dieser Tab zeigt</td></tr>
+          <tr><td><span class="tag">data-kawaii-no-shuffle</span></td><td>Beliebig</td><td>Unterdrückt den Auto-Inject des Shuffle-FAB</td></tr>
+        </table>
+      </div>
+    </section>
+    <hr class="docs-divider" />
+
+    <!-- ══ SHUFFLE ════════════════════════════════════════════ -->
+    <section class="docs-section" id="shuffle">
+      <div class="docs-section-label">JavaScript</div>
+      <h2 class="docs-section-title">🔀 Palette Shuffle</h2>
+      <p class="docs-section-desc">40 kuratierte Farbkombinationen aus 3 Gruppen (Warm, Cool, Rose). Der ⇄-Button rechts unten ist automatisch eingeblendet.</p>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Live Palette Preview</div>
+        <div class="docs-demo-box" style="flex-wrap:wrap;gap:8px" id="palette-preview"></div>
+      </div>
+
+      <div class="docs-demo">
+        <div class="docs-demo-label">Manuell aufrufen</div>
+        <div class="docs-demo-box">
+          <button class="k-btn" onclick="var c=Kawaii.shuffle();Kawaii.showSnack('Palette: '+c[0]+' · '+c[1]+' · '+c[2])">🔀 Shuffle + Anzeigen</button>
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.setTheme('#CC5682','#72AAA4','#EEEBE5')">Rose + Teal</button>
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.setTheme('#4B6E6F','#DCC26E','#EEEBE5')">Teal + Gold</button>
+          <button class="k-btn k-btn--tonal" onclick="Kawaii.setTheme('#633F40','#D4EBED','#EEEBE5')">Burgund + Blau</button>
+        </div>
+      </div>
+
+      <div class="docs-code"><span class="c-cmt">// Zufällig shuffeln</span>
+const combo = Kawaii.shuffle();
+console.log(combo); <span class="c-cmt">// ['#CC5682', '#72AAA4', '#EEEBE5']</span>
+
+<span class="c-cmt">// Eigene Palette setzen</span>
+Kawaii.setTheme(<span class="c-val">'#CC5682'</span>, <span class="c-val">'#72AAA4'</span>, <span class="c-val">'#EEEBE5'</span>);
+
+<span class="c-cmt">// Shuffle-FAB unterdrücken:</span>
+<span class="c-tag">&lt;body</span> <span class="c-attr">data-kawaii-no-shuffle</span><span class="c-tag">&gt;</span></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="kawaii.js"></script>
+<script>
+  // Inject circular spinners into demo
+  document.addEventListener('DOMContentLoaded', function () {
+    var demo = document.getElementById('spinner-demo');
+    if (demo) {
+      [24, 40, 64].forEach(function (sz) {
+        var wrap = document.createElement('div');
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+        wrap.style.alignItems = 'center';
+        wrap.style.gap = '6px';
+        var s = Kawaii.makeSpinner(sz, true);
+        var label = document.createElement('span');
+        label.className = 'k-label-sm k-text-muted';
+        label.textContent = sz + 'px';
+        wrap.appendChild(s);
+        wrap.appendChild(label);
+        demo.appendChild(wrap);
+      });
+    }
+
+    // Palette preview grid
+    var preview = document.getElementById('palette-preview');
+    if (preview) {
+      Kawaii.getPalette().forEach(function (combo, i) {
+        var btn = document.createElement('button');
+        btn.title = combo.join(' · ');
+        btn.onclick = function () { Kawaii.setTheme(combo[0], combo[1], combo[2]); Kawaii.showSnack('Palette ' + (i+1) + ' aktiv'); };
+        btn.style.cssText = 'display:flex;gap:3px;border:2px solid transparent;border-radius:var(--k-shape-full);padding:4px;cursor:pointer;background:transparent;transition:border-color 150ms;';
+        btn.onmouseenter = function () { btn.style.borderColor = 'var(--k-primary)'; };
+        btn.onmouseleave = function () { btn.style.borderColor = 'transparent'; };
+        combo.forEach(function (c) {
+          var dot = document.createElement('div');
+          dot.style.cssText = 'width:16px;height:16px;border-radius:50%;background:' + c + ';border:1px solid rgba(0,0,0,.1);';
+          btn.appendChild(dot);
+        });
+        preview.appendChild(btn);
+      });
+    }
+
+    // Sidebar active tracking
+    var sections = document.querySelectorAll('.docs-section');
+    var links = document.querySelectorAll('.docs-nav-link');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          links.forEach(function (l) { l.classList.remove('is-active'); });
+          var link = document.querySelector('.docs-nav-link[href="#' + entry.target.id + '"]');
+          if (link) link.classList.add('is-active');
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(function (s) { observer.observe(s); });
+  });
+</script>
+</body>
+</html>
