@@ -68,6 +68,117 @@ const T = {
   easeAccel:   "cubic-bezier(0.3,0,1,1)",
 };
 
+// ─── PALETTE & THEME BUILDER ─────────────────────────────
+
+function _hexRgb(hex) {
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+}
+function _relLum(r,g,b) {
+  return [r,g,b].reduce((acc,c,i) => {
+    const s = c/255; const lin = s<=0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055,2.4);
+    return acc + lin*[0.2126,0.7152,0.0722][i];
+  },0);
+}
+function _ct(hex) { const [r,g,b]=_hexRgb(hex); return _relLum(r,g,b)>0.179?"#1a1a1a":"#ffffff"; }
+function _lighten(hex,t) { const [r,g,b]=_hexRgb(hex); const h=v=>Math.round(v+(255-v)*t).toString(16).padStart(2,"0"); return `#${h(r)}${h(g)}${h(b)}`; }
+function _darken(hex,t)  { const [r,g,b]=_hexRgb(hex); const h=v=>Math.round(v*(1-t)).toString(16).padStart(2,"0"); return `#${h(r)}${h(g)}${h(b)}`; }
+function _blend(h1,h2,t) { const [r1,g1,b1]=_hexRgb(h1),[r2,g2,b2]=_hexRgb(h2); const h=(a,b)=>Math.round(a*(1-t)+b*t).toString(16).padStart(2,"0"); return `#${h(r1,r2)}${h(g1,g2)}${h(b1,b2)}`; }
+
+// 40 curated contrasting triplets [primary, secondary, surface]
+const PALETTE_COMBOS = [
+  ["#4B6E6F","#D39180","#F6F8F7"],
+  ["#4B6E6F","#DCC26E","#EEEBE5"],
+  ["#72AAA4","#F1E489","#F6F8F7"],
+  ["#D39180","#72AAA4","#EEEBE5"],
+  ["#DCC26E","#CCD4D1","#F6F8F7"],
+  ["#71808D","#EBD1DE","#F4E6EF"],
+  ["#71808D","#D4EBED","#DEDEE0"],
+  ["#93C1D8","#AA9AA2","#DEDEE0"],
+  ["#95BCCE","#C3B9BF","#F4E6EF"],
+  ["#96AFB8","#E2B6C7","#F6F8F7"],
+  ["#CC5682","#D4EBED","#F4E6EF"],
+  ["#CC5682","#CCD4D1","#EEEBE5"],
+  ["#A64E68","#D4EBED","#F6F8F7"],
+  ["#A64E68","#EBD1DE","#F4E6EF"],
+  ["#633F40","#CCD4D1","#F4E9B2"],
+  ["#633F40","#D4EBED","#EEEBE5"],
+  ["#826669","#93C1D8","#DEDEE0"],
+  ["#826669","#D4EBED","#F4E6EF"],
+  ["#B9718B","#72AAA4","#F6F8F7"],
+  ["#B9718B","#CCD4D1","#EEEBE5"],
+  ["#A64E68","#72AAA4","#F6F8F7"],
+  ["#CC5682","#72AAA4","#EEEBE5"],
+  ["#4B6E6F","#E2B6C7","#F4E6EF"],
+  ["#4B6E6F","#EBD1DE","#F6F8F7"],
+  ["#71808D","#DEA0B7","#F4E6EF"],
+  ["#71808D","#E2B6C7","#EEEBE5"],
+  ["#D39180","#95BCCE","#F6F8F7"],
+  ["#D39180","#71808D","#EEEBE5"],
+  ["#DCC26E","#826669","#F6F8F7"],
+  ["#DCC26E","#4B6E6F","#DEDEE0"],
+  ["#96AFB8","#D1809A","#F4E6EF"],
+  ["#95BCCE","#D39180","#F4E9B2"],
+  ["#93C1D8","#B9718B","#F6F8F7"],
+  ["#AA9AA2","#72AAA4","#F4E9B2"],
+  ["#C3B9BF","#4B6E6F","#D4EBED"],
+  ["#D1809A","#71808D","#D4EBED"],
+  ["#DEA0B7","#96AFB8","#F6F8F7"],
+  ["#C498A8","#72AAA4","#DEDEE0"],
+  ["#72AAA4","#EBD1DE","#F4E9B2"],
+  ["#CC5682","#4B6E6F","#F4E9B2"],
+];
+
+function buildThemeColors(primary, secondary, surface) {
+  const [pr,pg,pb] = _hexRgb(primary);
+  const [ir,ig,ib] = _hexRgb(_darken(primary, 0.52));
+  const primaryContainer   = _lighten(primary, 0.72);
+  const onPrimary          = _ct(primary);
+  const onPrimaryContainer = _darken(primary, 0.42);
+  const secondaryContainer   = _lighten(secondary, 0.72);
+  const onSecondary          = _ct(secondary);
+  const onSecondaryContainer = _darken(secondary, 0.42);
+  const tertiary             = _blend(primary, secondary, 0.5);
+  const tertiaryContainer    = _lighten(tertiary, 0.72);
+  const onTertiary           = _ct(tertiary);
+  const onTertiaryContainer  = _darken(tertiary, 0.42);
+  const onSurface            = _ct(surface);
+  const surfaceVariant       = _blend(surface, primary, 0.12);
+  const onSurfaceVariant     = _darken(primary, 0.28);
+  const background           = _lighten(surface, 0.08);
+  const outline              = _blend(primary, surface, 0.62);
+  const outlineVariant       = _lighten(primary, 0.80);
+  const surfaceContainerLowest  = _lighten(surface, 0.25);
+  const surfaceContainerLow     = _lighten(surface, 0.15);
+  const surfaceContainer        = primaryContainer;
+  const surfaceContainerHigh    = _lighten(primary, 0.55);
+  const surfaceContainerHighest = _lighten(primary, 0.35);
+  const inverseSurface   = _darken(primary, 0.52);
+  const inverseOnSurface = _lighten(surface, 0.12);
+  const inversePrimary   = _lighten(primary, 0.48);
+  const darkBg           = _darken(primary, 0.84);
+  const darkSurface      = _darken(primary, 0.77);
+  const darkPrimary      = _lighten(primary, 0.50);
+  return {
+    primary, onPrimary, primaryContainer, onPrimaryContainer,
+    secondary, onSecondary, secondaryContainer, onSecondaryContainer,
+    tertiary, onTertiary, tertiaryContainer, onTertiaryContainer,
+    error:"#c62828", onError:"#ffffff", errorContainer:"#ffebee", onErrorContainer:"#b71c1c",
+    surface, onSurface, surfaceVariant, onSurfaceVariant,
+    outline, outlineVariant, background, onBackground: onSurface,
+    surfaceContainerLowest, surfaceContainerLow, surfaceContainer,
+    surfaceContainerHigh, surfaceContainerHighest,
+    inverseSurface, inverseOnSurface, inversePrimary,
+    scrim:`rgba(${ir},${ig},${ib},0.4)`,
+    darkBg, darkSurface, darkPrimary, darkOnPrimary: darkBg,
+    elev0:"none",
+    elev1:`0 1px 3px rgba(${pr},${pg},${pb},0.12),0 1px 2px rgba(${pr},${pg},${pb},0.08)`,
+    elev2:`0 2px 8px rgba(${pr},${pg},${pb},0.14),0 1px 4px rgba(${pr},${pg},${pb},0.1)`,
+    elev3:`0 4px 16px rgba(${pr},${pg},${pb},0.18),0 2px 8px rgba(${pr},${pg},${pb},0.12)`,
+    elev4:`0 6px 24px rgba(${pr},${pg},${pb},0.22),0 4px 12px rgba(${pr},${pg},${pb},0.14)`,
+    elev5:`0 8px 40px rgba(${pr},${pg},${pb},0.28),0 4px 16px rgba(${pr},${pg},${pb},0.16)`,
+  };
+}
+
 // ─── NAV SECTIONS ──────────────────────────────────────────
 const NAV = [
   { id:"color",       label:"Color System",        icon:"🎨" },
@@ -1022,32 +1133,44 @@ const typeScale = [
   { role: "Body Small",      size: 12, weight: 400, tracking: 0.4,   lineHeight: 16, use: "Helper Text, Captions" },
 ];
 
-// ─── COLOR ROLE TABLE ──────────────────────────────────────
-const colorRoles = [
-  { role: "Primary",            bg: T.primary,            fg: T.onPrimary,            label: "Primäre Aktionen, FAB, aktive Zustände" },
-  { role: "On Primary",         bg: T.onPrimary,          fg: T.primary,              label: "Text/Icons auf Primary" },
-  { role: "Primary Container",  bg: T.primaryContainer,   fg: T.onPrimaryContainer,   label: "Chips aktiv, Selected-Badges" },
-  { role: "Secondary",          bg: T.secondary,          fg: T.onSecondary,          label: "Sekundäre Buttons, Akzente" },
-  { role: "Secondary Container",bg: T.secondaryContainer, fg: T.onSecondaryContainer, label: "Tonal Chips, Soft Cards" },
-  { role: "Tertiary",           bg: T.tertiary,           fg: T.onTertiary,           label: "Kontrast-Akzent (Mint/Teal)" },
-  { role: "Tertiary Container", bg: T.tertiaryContainer,  fg: T.onTertiaryContainer,  label: "Dekorative Highlights" },
-  { role: "Error",              bg: T.error,              fg: T.onError,              label: "Fehlermeldungen, Destructive Actions" },
-  { role: "Error Container",    bg: T.errorContainer,     fg: T.onErrorContainer,     label: "Error-Hintergründe" },
-  { role: "Surface",            bg: T.surface,            fg: T.onSurface,            label: "Page Background, Base Cards" },
-  { role: "Surface Variant",    bg: T.surfaceVariant,     fg: T.onSurfaceVariant,     label: "Abgestufte Cards, Inputs" },
-  { role: "Outline",            bg: "#fff", fg: T.outline,                            label: "Borders, Divider" },
-  { role: "Inverse Surface",    bg: T.inverseSurface,     fg: T.inverseOnSurface,     label: "Snackbar, Tooltip" },
-];
+// colorRoles is defined inside KawaiiDS2 so it re-evaluates on every theme change
 
 // ─── MAIN RENDER ──────────────────────────────────────────
 export default function KawaiiDS2() {
   const [activeSection, setActiveSection] = useState("color");
   const [snackVisible, setSnackVisible] = useState(false);
+  const [themeKey, setThemeKey] = useState(0);
+  const [activeCombo, setActiveCombo] = useState(null);
+  const [shuffleHover, setShuffleHover] = useState(false);
 
   const showSnack = () => {
     setSnackVisible(true);
     setTimeout(() => setSnackVisible(false), 3000);
   };
+
+  const shuffleTheme = () => {
+    const combo = PALETTE_COMBOS[Math.floor(Math.random() * PALETTE_COMBOS.length)];
+    Object.assign(T, buildThemeColors(combo[0], combo[1], combo[2]));
+    setActiveCombo(combo);
+    setThemeKey(k => k + 1);
+  };
+
+  // Re-evaluated on every render so color swatches stay in sync
+  const colorRoles = [
+    { role: "Primary",            bg: T.primary,            fg: T.onPrimary,            label: "Primäre Aktionen, FAB, aktive Zustände" },
+    { role: "On Primary",         bg: T.onPrimary,          fg: T.primary,              label: "Text/Icons auf Primary" },
+    { role: "Primary Container",  bg: T.primaryContainer,   fg: T.onPrimaryContainer,   label: "Chips aktiv, Selected-Badges" },
+    { role: "Secondary",          bg: T.secondary,          fg: T.onSecondary,          label: "Sekundäre Buttons, Akzente" },
+    { role: "Secondary Container",bg: T.secondaryContainer, fg: T.onSecondaryContainer, label: "Tonal Chips, Soft Cards" },
+    { role: "Tertiary",           bg: T.tertiary,           fg: T.onTertiary,           label: "Kontrast-Akzent (Mint/Teal)" },
+    { role: "Tertiary Container", bg: T.tertiaryContainer,  fg: T.onTertiaryContainer,  label: "Dekorative Highlights" },
+    { role: "Error",              bg: T.error,              fg: T.onError,              label: "Fehlermeldungen, Destructive Actions" },
+    { role: "Error Container",    bg: T.errorContainer,     fg: T.onErrorContainer,     label: "Error-Hintergründe" },
+    { role: "Surface",            bg: T.surface,            fg: T.onSurface,            label: "Page Background, Base Cards" },
+    { role: "Surface Variant",    bg: T.surfaceVariant,     fg: T.onSurfaceVariant,     label: "Abgestufte Cards, Inputs" },
+    { role: "Outline",            bg: "#fff", fg: T.outline,                            label: "Borders, Divider" },
+    { role: "Inverse Surface",    bg: T.inverseSurface,     fg: T.inverseOnSurface,     label: "Snackbar, Tooltip" },
+  ];
 
   const renderContent = () => {
     switch(activeSection) {
@@ -1850,13 +1973,14 @@ export default function KawaiiDS2() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; transition: background-color 350ms ease, color 350ms ease, border-color 350ms ease, box-shadow 350ms ease; }
         body { margin: 0; }
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #fff0f5; }
-        ::-webkit-scrollbar-thumb { background: #f48fb1; border-radius: 999px; }
+        ::-webkit-scrollbar-track { background: ${T.background}; }
+        ::-webkit-scrollbar-thumb { background: ${T.surfaceContainerHighest}; border-radius: 999px; }
         @keyframes dialogIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: none; } }
         @keyframes menuIn { from { opacity: 0; transform: scaleY(0.8); transform-origin: top; } to { opacity: 1; transform: none; } }
+        @keyframes shuffleSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
       <div style={{ display: "flex", minHeight: "100vh", background: T.background, fontFamily: T.fontBody, fontSize: 14 }}>
         {/* Sidebar */}
@@ -1888,6 +2012,51 @@ export default function KawaiiDS2() {
         <div style={{ flex: 1, padding: "32px 36px", overflowY: "auto", maxWidth: 900 }}>
           {renderContent()}
         </div>
+      </div>
+
+      {/* ── Shuffle FAB ─────────────────────────────────────── */}
+      <div style={{ position: "fixed", bottom: 28, right: 28, zIndex: 9999, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10 }}>
+        {activeCombo && (
+          <div style={{
+            display: "flex", alignItems: "center", gap: 6,
+            background: T.inverseSurface, borderRadius: T.shapeFull,
+            padding: "5px 14px 5px 8px", boxShadow: T.elev2,
+            opacity: shuffleHover ? 1 : 0.85,
+            transition: "opacity 200ms",
+          }}>
+            {activeCombo.map((c, i) => (
+              <div key={i} style={{
+                width: 16, height: 16, borderRadius: "50%", background: c,
+                border: "1.5px solid rgba(255,255,255,0.35)",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+              }} />
+            ))}
+            <span style={{ fontSize: 10, fontWeight: 700, color: T.inverseOnSurface, marginLeft: 4, letterSpacing: "0.04em" }}>
+              Aktive Palette
+            </span>
+          </div>
+        )}
+        <button
+          onClick={shuffleTheme}
+          onMouseEnter={() => setShuffleHover(true)}
+          onMouseLeave={() => setShuffleHover(false)}
+          title="Zufällige Farbpalette"
+          style={{
+            width: 56, height: 56, borderRadius: "50%",
+            background: shuffleHover ? T.primaryContainer : T.primary,
+            color: shuffleHover ? T.onPrimaryContainer : T.onPrimary,
+            border: `2px solid ${shuffleHover ? T.primary : "transparent"}`,
+            cursor: "pointer",
+            boxShadow: shuffleHover ? T.elev5 : T.elev3,
+            fontSize: 22,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transform: shuffleHover ? "scale(1.08) rotate(30deg)" : "scale(1)",
+            transition: `all 250ms ${T.easeBounce}`,
+            outline: "none",
+          }}
+        >
+          ⇄
+        </button>
       </div>
     </>
   );
