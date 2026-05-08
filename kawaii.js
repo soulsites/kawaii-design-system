@@ -216,7 +216,7 @@
     wrap.id = 'k-shuffle-fab';
     wrap.innerHTML =
       '<div id="k-palette-chip"></div>' +
-      '<button id="k-shuffle-btn" title="Zufällige Farbpalette" aria-label="Shuffle Palette">&#x21C4;</button>';
+      '<button id="k-shuffle-btn" title="Zufällige Farbpalette" aria-label="Shuffle Palette">🔀</button>';
     document.body.appendChild(wrap);
     document.getElementById('k-shuffle-btn').addEventListener('click', function () {
       Kawaii.shuffle();
