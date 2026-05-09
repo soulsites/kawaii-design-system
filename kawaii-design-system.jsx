@@ -58,8 +58,8 @@ const T = {
   shapeXxl:    "32px",
   shapeFull:   "999px",
   // Type scale labels
-  fontDisplay: "'Nunito', 'Comfortaa', sans-serif",
-  fontBody:    "'Nunito', 'DM Sans', sans-serif",
+  fontDisplay: "'Nunito', 'Comfortaa', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', sans-serif",
+  fontBody:    "'Nunito', 'DM Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', sans-serif",
   fontMono:    "'JetBrains Mono', monospace",
   // Easing
   easeBounce:  "cubic-bezier(0.34,1.56,0.64,1)",
@@ -2055,7 +2055,7 @@ export default function KawaiiDS2() {
             outline: "none",
           }}
         >
-          ⇄
+          🔀
         </button>
       </div>
     </>

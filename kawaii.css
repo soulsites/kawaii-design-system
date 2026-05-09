@@ -61,8 +61,8 @@
   --k-shape-full: 999px;
 
   /* Typography */
-  --k-font-display: 'Nunito', 'Comfortaa', sans-serif;
-  --k-font-body:    'Nunito', 'DM Sans', sans-serif;
+  --k-font-display: 'Nunito', 'Comfortaa', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', sans-serif;
+  --k-font-body:    'Nunito', 'DM Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', sans-serif;
   --k-font-mono:    'JetBrains Mono', monospace;
 
   /* Easing */
